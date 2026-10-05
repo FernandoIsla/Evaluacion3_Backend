@@ -1,0 +1,521 @@
+{
+    "info": {
+        "name": "Evaluacion 3 - Centro Medico API",
+        "description": "Colección de pruebas API REST con JWT y CRUD de Pacientes",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "http://127.0.0.1:8000/api",
+            "type": "string"
+        },
+        {
+            "key": "access_token",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "refresh_token",
+            "value": "",
+            "type": "string"
+        }
+    ],
+    "item": [
+        {
+            "name": "1. Autenticacion JWT",
+            "item": [
+                {
+                    "name": "1.1 Obtener Token (Login)",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 200) {",
+                                    "    var data = pm.response.json();",
+                                    "    pm.collectionVariables.set('access_token', data.access);",
+                                    "    pm.collectionVariables.set('refresh_token', data.refresh);",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"username\": \"admin\",\n    \"password\": \"admin\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/token/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "token",
+                                ""
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "1.2 Renovar Token (Refresh)",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 200) {",
+                                    "    var data = pm.response.json();",
+                                    "    pm.collectionVariables.set('access_token', data.access);",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"refresh\": \"{{refresh_token}}\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/token/refresh/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "token",
+                                "refresh",
+                                ""
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "2. Pacientes (Casos Exitosos)",
+            "item": [
+                {
+                    "name": "2.1 Crear Paciente 1 (201 Created)",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"run\": \"19876543-0\",\n    \"nombre\": \"Camila\",\n    \"apellido\": \"Perez\",\n    \"email\": \"camila.perez@example.com\",\n    \"fecha_nacimiento\": \"1995-04-12\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/pacientes/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "pacientes",
+                                ""
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "2.2 Crear Paciente 2 (201 Created)",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"run\": \"11111111-1\",\n    \"nombre\": \"Rodrigo\",\n    \"apellido\": \"Soto\",\n    \"email\": \"rodrigo.soto@example.com\",\n    \"fecha_nacimiento\": \"2000-08-20\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/pacientes/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "pacientes",
+                                ""
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "2.3 Listar Todos los Pacientes (200 OK)",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "url": {
+                            "raw": "{{base_url}}/pacientes/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "pacientes",
+                                ""
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "2.4 Filtrar Pacientes por Apellido (200 OK)",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "url": {
+                            "raw": "{{base_url}}/pacientes/?apellido=Perez",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "pacientes",
+                                ""
+                            ],
+                            "query": [
+                                {
+                                    "key": "apellido",
+                                    "value": "Perez"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "2.5 Detalle de Paciente por RUN (200 OK)",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "url": {
+                            "raw": "{{base_url}}/pacientes/19876543-0/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "pacientes",
+                                "19876543-0",
+                                ""
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "2.6 Actualizar Paciente (200 OK)",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"run\": \"19876543-0\",\n    \"nombre\": \"Camila Andrea\",\n    \"apellido\": \"Perez\",\n    \"email\": \"camila.actualizada@example.com\",\n    \"fecha_nacimiento\": \"1995-04-12\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/pacientes/19876543-0/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "pacientes",
+                                "19876543-0",
+                                ""
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "2.7 Eliminar Paciente (204 No Content)",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "DELETE",
+                        "url": {
+                            "raw": "{{base_url}}/pacientes/11111111-1/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "pacientes",
+                                "11111111-1",
+                                ""
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "3. Casos de Error y Validaciones",
+            "item": [
+                {
+                    "name": "3.1 Error 401: Peticion sin Token",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "{{base_url}}/pacientes/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "pacientes",
+                                ""
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "3.2 Error 401: Token Invalido",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "token_invalido_123",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "url": {
+                            "raw": "{{base_url}}/pacientes/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "pacientes",
+                                ""
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "3.3 Error 400: RUN con DV Invalido",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"run\": \"19876543-9\",\n    \"nombre\": \"Prueba\",\n    \"apellido\": \"Fallo\",\n    \"email\": \"fallo.dv@example.com\",\n    \"fecha_nacimiento\": \"1990-01-01\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/pacientes/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "pacientes",
+                                ""
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "3.4 Error 400: Fecha Futura",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"run\": \"12345678-5\",\n    \"nombre\": \"Viajero\",\n    \"apellido\": \"Futuro\",\n    \"email\": \"futuro@example.com\",\n    \"fecha_nacimiento\": \"2030-01-01\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/pacientes/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "pacientes",
+                                ""
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "3.5 Error 400: Email Invalido",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"run\": \"12345678-5\",\n    \"nombre\": \"Test\",\n    \"apellido\": \"Email\",\n    \"email\": \"correo_invalido_sin_arroba\",\n    \"fecha_nacimiento\": \"1990-01-01\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/pacientes/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "pacientes",
+                                ""
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "3.6 Error 404: Paciente No Encontrado",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "url": {
+                            "raw": "{{base_url}}/pacientes/99999999-9/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "pacientes",
+                                "99999999-9",
+                                ""
+                            ]
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}
