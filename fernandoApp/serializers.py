@@ -26,6 +26,36 @@ class PacienteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Paciente
         fields = ['run', 'nombre', 'apellido', 'email', 'fecha_nacimiento']
+        extra_kwargs = {
+            'run': {
+                'error_messages': {
+                    'required': 'El RUN es obligatorio.',
+                    'unique': 'Ya existe un paciente registrado con este RUN.'
+                }
+            },
+            'nombre': {
+                'error_messages': {
+                    'required': 'El nombre es obligatorio.'
+                }
+            },
+            'apellido': {
+                'error_messages': {
+                    'required': 'El apellido es obligatorio.'
+                }
+            },
+            'email': {
+                'error_messages': {
+                    'required': 'El correo electrónico es obligatorio.',
+                    'unique': 'Ya existe un paciente registrado con este correo electrónico.'
+                }
+            },
+            'fecha_nacimiento': {
+                'error_messages': {
+                    'required': 'La fecha de nacimiento es obligatoria.',
+                    'invalid': 'Formato de fecha inválido. Debe ser AAAA-MM-DD.'
+                }
+            }
+        }
 
     def validate_run(self, value):
         valor_limpio = value.strip().upper()
