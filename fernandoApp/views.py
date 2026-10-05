@@ -55,7 +55,30 @@ class PacienteDetailAPIView(APIView):
                 status=status.HTTP_404_NOT_FOUND
             )
         
-        serializer = PacienteSerializer(paciente, data=request.data)
+        data = request.data.copy() if hasattr(request.data, 'copy') else dict(request.data)
+        if 'run' not in data:
+            data['run'] = paciente.run
+        elif data.get('run') != paciente.run:
+            return Response(
+                {"error": "El RUN del cuerpo de la petición no coincide con el RUN de la URL."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        serializer = PacienteSerializer(paciente, data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def patch(self, request, run):
+        paciente = self._get_object(run)
+        if not paciente:
+            return Response(
+                {"error": f"Paciente con RUN {run} no encontrado."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        serializer = PacienteSerializer(paciente, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
